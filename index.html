@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <title>AI Ski Vacation Planner</title>
+   <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+   <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+   <style>
+       .planner-card {
+           max-width: 600px;
+           margin: 2rem auto;
+           padding: 2rem;
+           border-radius: 8px;
+           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+           background: white;
+       }
+       .form-group {
+           margin-bottom: 1rem;
+       }
+       .label {
+           display: block;
+           margin-bottom: 0.5rem;
+           font-weight: bold;
+       }
+       .input, .select {
+           width: 100%;
+           padding: 0.5rem;
+           border: 1px solid #ccc;
+           border-radius: 4px;
+       }
+       .button {
+           background: #3b82f6;
+           color: white;
+           padding: 0.75rem 1.5rem;
+           border-radius: 4px;
+           border: none;
+           width: 100%;
+           cursor: pointer;
+       }
+       .button:hover {
+           background: #2563eb;
+       }
+   </style>
+</head>
+<body class="bg-gray-100">
+   <div class="planner-card">
+       <h1 class="text-2xl font-bold mb-6">AI Ski Vacation Planner</h1>
+       
+       <div class="form-group">
+           <label class="label">Where would you like to ski?</label>
+           <select class="select">
+               <option>Select location</option>
+               <option>Utah</option>
+               <option>Colorado</option>
+               <option>Lake Tahoe</option>
+           </select>
+       </div>
+
+       <div class="form-group">
+           <label class="label">Skill Level</label>
+           <select class="select">
+               <option>Beginner</option>
+               <option>Intermediate</option>
+               <option>Advanced</option>
+           </select>
+       </div>
+
+       <div class="form-group">
+           <label class="label">When do you want to go?</label>
+           <input type="date" class="input">
+       </div>
+
+       <div class="form-group">
+           <label class="label">Budget per day</label>
+           <select class="select">
+               <option>Under $200</option>
+               <option>$200-400</option>
+               <option>$400+</option>
+           </select>
+       </div>
+
+       <button class="button">Generate AI Travel Plan</button>
+   </div>
+</body>
+</html>
