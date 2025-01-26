@@ -1,64 +1,139 @@
 <!DOCTYPE html>
 <html>
 <head>
-   <title>AI Ski Vacation Planner</title>
+   <title>Ski Utah Planner</title>
    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
    <style>
+       body {
+           background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1551698618-1dfe5d97d256');
+           background-size: cover;
+           background-position: center;
+           min-height: 100vh;
+           font-family: 'Arial', sans-serif;
+       }
        .planner-card {
            max-width: 600px;
            margin: 2rem auto;
            padding: 2rem;
-           border-radius: 8px;
-           box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-           background: white;
+           border-radius: 12px;
+           background: rgba(255, 255, 255, 0.95);
+           box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+           backdrop-filter: blur(8px);
+       }
+       .header {
+           text-align: center;
+           color: white;
+           padding: 2rem;
+           font-size: 2.5rem;
+           text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
        }
        .form-group {
-           margin-bottom: 1rem;
+           margin-bottom: 1.5rem;
        }
        .label {
            display: block;
            margin-bottom: 0.5rem;
            font-weight: bold;
+           color: #1a365d;
        }
        .input, .select {
            width: 100%;
-           padding: 0.5rem;
-           border: 1px solid #ccc;
-           border-radius: 4px;
+           padding: 0.75rem;
+           border: 2px solid #e2e8f0;
+           border-radius: 8px;
+           font-size: 1rem;
+           transition: all 0.3s ease;
+       }
+       .input:focus, .select:focus {
+           border-color: #3b82f6;
+           outline: none;
+           box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
        }
        .button {
-           background: #3b82f6;
+           background: linear-gradient(135deg, #3b82f6, #2563eb);
            color: white;
-           padding: 0.75rem 1.5rem;
-           border-radius: 4px;
+           padding: 1rem 2rem;
+           border-radius: 8px;
            border: none;
            width: 100%;
            cursor: pointer;
+           font-weight: bold;
+           font-size: 1.1rem;
+           transition: transform 0.2s ease;
        }
        .button:hover {
-           background: #2563eb;
+           transform: translateY(-2px);
+           box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+       }
+       .result-card {
+           background: white;
+           padding: 1rem;
+           margin-top: 1rem;
+           border-radius: 8px;
+           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+       }
+       .result-card h3 {
+           color: #1a365d;
+           font-size: 1.25rem;
+           margin-bottom: 0.5rem;
+       }
+       .result-card ul {
+           margin-top: 0.5rem;
+           padding-left: 1.5rem;
        }
    </style>
+   <script>
+       async function generatePlan() {
+           const formData = {
+               location: document.getElementById('location').value,
+               skill_level: document.getElementById('skill').value,
+               dates: document.getElementById('dates').value,
+               budget: document.getElementById('budget').value
+           };
+
+           const response = await fetch('http://localhost:8000/generate_plan', {
+               method: 'POST',
+               headers: { 'Content-Type': 'application/json' },
+               body: JSON.stringify(formData)
+           });
+
+           const result = await response.json();
+           displayResults(result.matches);
+       }
+
+       function displayResults(matches) {
+           const resultsDiv = document.getElementById('results');
+           resultsDiv.innerHTML = matches.map(match => `
+               <div class="result-card">
+                   <h3>${match.resort}</h3>
+                   <p>Match Score: ${match.match_score}%</p>
+                   <ul>
+                       ${match.recommendations.map(rec => `<li>${rec}</li>`).join('')}
+                   </ul>
+               </div>
+           `).join('');
+       }
+   </script>
 </head>
-<body class="bg-gray-100">
+<body>
+   <h1 class="header">Explore Utah's Greatest Ski Destinations</h1>
    <div class="planner-card">
-       <h1 class="text-2xl font-bold mb-6">AI Ski Vacation Planner</h1>
+       <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Ski Utah Planner</h2>
        
        <div class="form-group">
            <label class="label">Where would you like to ski?</label>
-           <select class="select">
+           <select id="location" class="select">
                <option>Select location</option>
-               <option>Utah</option>
-               <option>Colorado</option>
-               <option>Lake Tahoe</option>
+               <option>Northern Utah</option>
+               <option>Southern Utah</option>
            </select>
        </div>
 
        <div class="form-group">
            <label class="label">Skill Level</label>
-           <select class="select">
+           <select id="skill" class="select">
                <option>Beginner</option>
                <option>Intermediate</option>
                <option>Advanced</option>
@@ -67,19 +142,21 @@
 
        <div class="form-group">
            <label class="label">When do you want to go?</label>
-           <input type="date" class="input">
+           <input id="dates" type="date" class="input">
        </div>
 
        <div class="form-group">
            <label class="label">Budget per day</label>
-           <select class="select">
+           <select id="budget" class="select">
                <option>Under $200</option>
                <option>$200-400</option>
                <option>$400+</option>
            </select>
        </div>
 
-       <button class="button">Generate AI Travel Plan</button>
+       <button class="button" onclick="generatePlan()">Generate AI Travel Plan</button>
+
+       <div id="results" class="mt-6"></div>
    </div>
 </body>
 </html>
